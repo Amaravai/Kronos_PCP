@@ -1,0 +1,2062 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/16/2019 11:14:19 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="CND0462M"
+  DTS:CreatorName="CCHCS\cl151"
+  DTS:DTSID="{42BAAF0D-362C-47EE-910C-B500AC19540B}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="14.0.3025.39"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Kronos_PCP"
+  DTS:PackageType="5"
+  DTS:VersionBuild="23"
+  DTS:VersionGUID="{2CDEFF9E-BAFF-4A40-B2D9-E218C391B0C3}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[Kronos]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{3665B173-3821-4AA6-81F3-BC8A1F0C9705}"
+      DTS:ObjectName="Kronos">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=SHCDBPWKRON2101;Initial Catalog=tkcsdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SMGDataMart]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{BD77A527-9859-48AA-ACAA-BFA93E9846CF}"
+      DTS:ObjectName="SMGDataMart">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=SHCDSDBP01;Initial Catalog=SmgDatamart;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{F1C315B0-3F4C-43F4-B97B-6BE916D9A7FB}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="LastRunDate">
+      <DTS:VariableValue
+        DTS:DataType="7">1/1/2000</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{B813AEA4-2641-45E1-B851-4BFB540B1528}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{BD77A527-9859-48AA-ACAA-BFA93E9846CF}"
+          SQLTask:SqlStatementSource="select cast(LastRunDateTime as Date) as LastRunDateTime from [kronos].ETL_LastRun where SourceSystem = 'Kronos'"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="LastRunDateTime"
+            SQLTask:DtsVariableName="User::LastRunDate" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Load Data from wip_PCPComp to stg_PCPComp table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{3107F343-3F4C-4E3C-878C-9F2B4FCBA484}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Load Data from wip_PCPComp to stg_PCPComp table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{BD77A527-9859-48AA-ACAA-BFA93E9846CF}"
+          SQLTask:SqlStatementSource="EXEC [kronos].[usp_LoadData] @StartDateTime = ?;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::LastRunDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Test getting LastRunDate - Script Task"
+      DTS:CreationName="Microsoft.ScriptTask"
+      DTS:Description="Script Task"
+      DTS:Disabled="True"
+      DTS:DTSID="{F937A21F-9778-4ED4-8095-1FE0A773F727}"
+      DTS:ExecutableType="Microsoft.ScriptTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Test getting LastRunDate - Script Task"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ScriptProject
+          Name="ST_4bb272638c744ee7aa2fa761155be0e8"
+          VSTAMajorVersion="15"
+          VSTAMinorVersion="0"
+          Language="CSharp"
+          ReadOnlyVariables="User::LastRunDate">
+          <ProjectItem
+            Name="Properties\Resources.resx"
+            Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+</root>]]></ProjectItem>
+          <ProjectItem
+            Name="ST_4bb272638c744ee7aa2fa761155be0e8.csproj"
+            Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0308BD3D-A220-4A9A-817F-068DB38B52D1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ST_4bb272638c744ee7aa2fa761155be0e8</RootNamespace>
+    <AssemblyName>ST_4bb272638c744ee7aa2fa761155be0e8</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.SqlServer.ManagedDTS, Version=14.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Reference Include="Microsoft.SqlServer.ScriptTask, Version=14.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptMain.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <!-- Include the build rules for a C# project.-->
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}">
+        <ProjectProperties HostName="VSTAHostName" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" />
+        <Host Name="ScriptTask" />
+        <ProjectClient>
+          <HostIdentifier>SSIS_ST140</HostIdentifier>
+        </ProjectClient>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_4bb272638c744ee7aa2fa761155be0e8.Properties.Settings.get_Default():ST_4bb272638c744ee7aa2fa761155be0e8.Properties.Sett" +
+    "ings")]
+
+namespace ST_4bb272638c744ee7aa2fa761155be0e8.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
+          <ProjectItem
+            Name="ScriptMain.cs"
+            Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
+/* The Script Task allows you to perform virtually any operation that can be accomplished in
+ * a .Net application within the context of an Integration Services control flow. 
+ * 
+ * Expand the other regions which have "Help" prefixes for examples of specific ways to use
+ * Integration Services features within this script task. */
+#endregion
+
+
+#region Namespaces
+using System;
+using System.Data;
+using Microsoft.SqlServer.Dts.Runtime;
+using System.Windows.Forms;
+#endregion
+
+namespace ST_4bb272638c744ee7aa2fa761155be0e8
+{
+    /// <summary>
+    /// ScriptMain is the entry point class of the script.  Do not change the name, attributes,
+    /// or parent of this class.
+    /// </summary>
+	[Microsoft.SqlServer.Dts.Tasks.ScriptTask.SSISScriptTaskEntryPointAttribute]
+	public partial class ScriptMain : Microsoft.SqlServer.Dts.Tasks.ScriptTask.VSTARTScriptObjectModelBase
+	{
+        #region Help:  Using Integration Services variables and parameters in a script
+        /* To use a variable in this script, first ensure that the variable has been added to 
+         * either the list contained in the ReadOnlyVariables property or the list contained in 
+         * the ReadWriteVariables property of this script task, according to whether or not your
+         * code needs to write to the variable.  To add the variable, save this script, close this instance of
+         * Visual Studio, and update the ReadOnlyVariables and 
+         * ReadWriteVariables properties in the Script Transformation Editor window.
+         * To use a parameter in this script, follow the same steps. Parameters are always read-only.
+         * 
+         * Example of reading from a variable:
+         *  DateTime startTime = (DateTime) Dts.Variables["System::StartTime"].Value;
+         * 
+         * Example of writing to a variable:
+         *  Dts.Variables["User::myStringVariable"].Value = "new value";
+         * 
+         * Example of reading from a package parameter:
+         *  int batchId = (int) Dts.Variables["$Package::batchId"].Value;
+         *  
+         * Example of reading from a project parameter:
+         *  int batchId = (int) Dts.Variables["$Project::batchId"].Value;
+         * 
+         * Example of reading from a sensitive project parameter:
+         *  int batchId = (int) Dts.Variables["$Project::batchId"].GetSensitiveValue();
+         * */
+
+        #endregion
+
+        #region Help:  Firing Integration Services events from a script
+        /* This script task can fire events for logging purposes.
+         * 
+         * Example of firing an error event:
+         *  Dts.Events.FireError(18, "Process Values", "Bad value", "", 0);
+         * 
+         * Example of firing an information event:
+         *  Dts.Events.FireInformation(3, "Process Values", "Processing has started", "", 0, ref fireAgain)
+         * 
+         * Example of firing a warning event:
+         *  Dts.Events.FireWarning(14, "Process Values", "No values received for input", "", 0);
+         * */
+        #endregion
+
+        #region Help:  Using Integration Services connection managers in a script
+        /* Some types of connection managers can be used in this script task.  See the topic 
+         * "Working with Connection Managers Programatically" for details.
+         * 
+         * Example of using an ADO.Net connection manager:
+         *  object rawConnection = Dts.Connections["Sales DB"].AcquireConnection(Dts.Transaction);
+         *  SqlConnection myADONETConnection = (SqlConnection)rawConnection;
+         *  //Use the connection in some code here, then release the connection
+         *  Dts.Connections["Sales DB"].ReleaseConnection(rawConnection);
+         *
+         * Example of using a File connection manager
+         *  object rawConnection = Dts.Connections["Prices.zip"].AcquireConnection(Dts.Transaction);
+         *  string filePath = (string)rawConnection;
+         *  //Use the connection in some code here, then release the connection
+         *  Dts.Connections["Prices.zip"].ReleaseConnection(rawConnection);
+         * */
+        #endregion
+
+
+		/// <summary>
+        /// This method is called when this script task executes in the control flow.
+        /// Before returning from this method, set the value of Dts.TaskResult to indicate success or failure.
+        /// To open Help, press F1.
+        /// </summary>
+		public void Main()
+		{
+            // TODO: Add your code here
+            string inputFilePath = Dts.Variables["User::LastRunDate"].Value.ToString();
+            MessageBox.Show(inputFilePath);
+
+            Dts.TaskResult = (int)ScriptResults.Success;
+		}
+
+        #region ScriptResults declaration
+        /// <summary>
+        /// This enum provides a convenient shorthand within the scope of this class for setting the
+        /// result of the script.
+        /// 
+        /// This code was generated automatically.
+        /// </summary>
+        enum ScriptResults
+        {
+            Success = Microsoft.SqlServer.Dts.Runtime.DTSExecResult.Success,
+            Failure = Microsoft.SqlServer.Dts.Runtime.DTSExecResult.Failure
+        };
+        #endregion
+
+	}
+}]]></ProjectItem>
+          <ProjectItem
+            Name="Project"
+            Encoding="UTF16LE"><![CDATA[<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
+<c:Project xmlns:c="http://schemas.microsoft.com/codeprojectml/2010/08/main" xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" runtimeVersion="4.0" schemaVersion="1.0">
+	<msb:PropertyGroup>
+		<msb:CodeName>ST_4bb272638c744ee7aa2fa761155be0e8</msb:CodeName>
+		<msb:Language>msBuild</msb:Language>
+		<msb:DisplayName>ST_4bb272638c744ee7aa2fa761155be0e8</msb:DisplayName>
+		<msb:ProjectId>{01651000-F07A-404F-98DF-23ADC1F903D8}</msb:ProjectId>
+	</msb:PropertyGroup>
+	<msb:ItemGroup>
+		<msb:Project Include="ST_4bb272638c744ee7aa2fa761155be0e8.csproj"/>
+		<msb:File Include="Properties\Settings.settings"/>
+		<msb:File Include="Properties\AssemblyInfo.cs"/>
+		<msb:File Include="Properties\Resources.resx"/>
+		<msb:File Include="Properties\Resources.Designer.cs"/>
+		<msb:File Include="Properties\Settings.Designer.cs"/>
+		<msb:File Include="ScriptMain.cs"/>
+	</msb:ItemGroup>
+</c:Project>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_4bb272638c744ee7aa2fa761155be0e8")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Steward Health Care System")]
+[assembly: AssemblyProduct("ST_4bb272638c744ee7aa2fa761155be0e8")]
+[assembly: AssemblyCopyright("Copyright @ Steward Health Care System 2019")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Resources.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_4bb272638c744ee7aa2fa761155be0e8.Properties.Resources.get_ResourceManager():System.Resources.Resou" +
+    "rceManager")]
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_4bb272638c744ee7aa2fa761155be0e8.Properties.Resources.get_Culture():System.Globalization.CultureIn" +
+    "fo")]
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_4bb272638c744ee7aa2fa761155be0e8.Properties.Resources.set_Culture(System.Globalization.CultureInfo" +
+    "):Void")]
+
+namespace ST_4bb272638c744ee7aa2fa761155be0e8.Properties {
+    
+    
+    /// <summary>
+    ///   A strongly-typed resource class, for looking up localized strings, etc.
+    /// </summary>
+    // This class was auto-generated by the StronglyTypedResourceBuilder
+    // class via a tool like ResGen or Visual Studio.
+    // To add or remove a member, edit your .ResX file then rerun ResGen
+    // with the /str option, or rebuild your VS project.
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    internal class Resources {
+        
+        private static global::System.Resources.ResourceManager resourceMan;
+        
+        private static global::System.Globalization.CultureInfo resourceCulture;
+        
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal Resources() {
+        }
+        
+        /// <summary>
+        ///   Returns the cached ResourceManager instance used by this class.
+        /// </summary>
+        [global::System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if ((resourceMan == null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ST_4bb272638c744ee7aa2fa761155be0e8.Properties.Resources", typeof(Resources).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+        
+        /// <summary>
+        ///   Overrides the current thread's CurrentUICulture property for all
+        ///   resource lookups using this strongly typed resource class.
+        /// </summary>
+        [global::System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+    }
+}]]></ProjectItem>
+          <BinaryItem
+            Name="ST_4bb272638c744ee7aa2fa761155be0e8.dll">TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAItp7lwAAAAAAAAAAOAAIiALATAAABAAAAAIAAAAAAAAFi4A
+AAAgAAAAQAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACAAAAAAgAAAAAAAAMAYIUAABAA
+ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAMQtAABPAAAAAEAAAOAEAAAAAAAAAAAAAAAAAAAA
+AAAAAGAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAIAAACAAAAAAAAAAAAAAACCAAAEgAAAAAAAAAAAAAAC50ZXh0AAAAHA4AAAAgAAAAEAAAAAIA
+AAAAAAAAAAAAAAAAACAAAGAucnNyYwAAAOAEAAAAQAAAAAYAAAASAAAAAAAAAAAAAAAAAABAAABA
+LnJlbG9jAAAMAAAAAGAAAAACAAAAGAAAAAAAAAAAAAAAAAAAQAAAQgAAAAAAAAAAAAAAAAAAAAD4
+LQAAAAAAAEgAAAACAAUA7CAAACAMAAABAAAAAAAAAAwtAAC4AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAMoCKBAAAApvEQAACnIBAABwbxIAAApvEwAACm8UAAAKKBUA
+AAomAigQAAAKFm8WAAAKKh4CKBcAAAoqHgIoGAAACiqufgEAAAQtHnIlAABw0AMAAAIoGQAACm8a
+AAAKcxsAAAqAAQAABH4BAAAEKhp+AgAABCoeAoACAAAEKhp+AwAABCoeAigcAAAKKi5zCAAABoAD
+AAAEKgAAAEJTSkIBAAEAAAAAAAwAAAB2NC4wLjMwMzE5AAAAAAUAbAAAANwDAAAjfgAASAQAAJAF
+AAAjU3RyaW5ncwAAAADYCQAAmAAAACNVUwBwCgAAEAAAACNHVUlEAAAAgAoAAKABAAAjQmxvYgAA
+AAAAAAACAAABVx2gAQkDAAAA+gEzABYAAAEAAAAfAAAABQAAAAYAAAAJAAAAAQAAABwAAAACAAAA
+EAAAAAIAAAADAAAABAAAAAEAAAAFAAAAAQAAAAEAAAAAAHUDAQAAAAAABgAlAkUEBgC0AkUEBgBx
+ATIEDwC5BAAABgCeAfMDBgAIAvMDBgDpAfMDBgCbAvMDBgBFAvMDBgBeAvMDBgC1AfMDBgDQAeIC
+CgB5AiQDCgDwACQDBgCtA6YDBgBUATIEBgBBBaYDBgAVBGUEBgAFBN4DDgAkAV8DDgCFAV8DDgAM
+AckDBgA5AUUECgBNAyQDEgD7BJsAEgBuAJsAFgB1BQ4FFgBUBQ4FBgC7AKYDBgB3AKYDBgCEBfMD
+AAAAACUAAAAAAAEAAQABABAAvgMBADkAAQABAAAAEABsBMgERQABAAMAAAEQAAUFyARZAAMABwAD
+AQAAMwUAAD0ABAAKABEAsgNoABEA4ABsABEAXgBwAAYGTQB0AFaAIwV3AFaAwAB3AFAgAAAAAIYA
+xAMGAAEAgyAAAAAAhhglBAYAAQCLIAAAAACDGCUEBgABAJMgAAAAAJMIEQR7AAEAvyAAAAAAkwjI
+AIAAAQDGIAAAAACTCNQAhQABAM4gAAAAAJYISAWLAAIA1SAAAAAAhhglBAYAAgDdIAAAAACRGCsE
+kAACAAAAAQDcAgkAJQQBABEAJQQGABkAJQQKACkAJQQQADEAJQQQADkAJQQQAEEAJQQQAEkAJQQQ
+AFEAJQQQAFkAJQQQAGEAJQQQAGkAJQQGAIEAJQQGAKkAJQQVALkAJQQGAHEAKwUbAMEA9wQgAMkA
+nQMlANEA0gIrAIkA/AIvANkAcAUzAMEAYQUBAHEAJQQGAIkAJQQGAOkAiQA5AOkAgAVAAJEAJQRF
+ALEAJQQGAAgAFABeAAgAGABjACkAcwDLAC4ACwCjAC4AEwCsAC4AGwDLAC4AIwDUAC4AKwD9AC4A
+MwD9AC4AOwADAS4AQwDUAC4ASwAjAS4AUwD9AC4AWwBUAUMAYwBjAEkAcwDLAGEAewBjAGMAawBj
+AAMAAQAEAAMAAAAVBJQAAADoAJkAAABMBZ4AAgAEAAMAAgAFAAUAAQAGAAUAAgAHAAcABIAAAAEA
+AACwG+UyAAAAAAAAAQAAAAQAAAAAAAAAAAAAAEwAVQAAAAAADgAAAAAAAAAAAAAAVQAFAwAAAAAE
+AAAAAAAAAAAAAABMAKYDAAAAAA4AAAAAAAAAAAAAAFUALgAAAAAABAAAAAAAAAAAAAAATAAOBQAA
+AAAAAAAAAQAAAHYEAAAFAAIAAAAAU1RfNGJiMjcyNjM4Yzc0NGVlN2FhMmZhNzYxMTU1YmUwZTgA
+PE1vZHVsZT4ATWljcm9zb2Z0LlNxbFNlcnZlci5NYW5hZ2VkRFRTAHZhbHVlX18AbXNjb3JsaWIA
+ZGVmYXVsdEluc3RhbmNlAFZhcmlhYmxlAFJ1bnRpbWVUeXBlSGFuZGxlAEdldFR5cGVGcm9tSGFu
+ZGxlAE1pY3Jvc29mdC5TcWxTZXJ2ZXIuRHRzLlJ1bnRpbWUAVHlwZQBGYWlsdXJlAGdldF9DdWx0
+dXJlAHNldF9DdWx0dXJlAHJlc291cmNlQ3VsdHVyZQBWU1RBUlRTY3JpcHRPYmplY3RNb2RlbEJh
+c2UAQXBwbGljYXRpb25TZXR0aW5nc0Jhc2UARWRpdG9yQnJvd3NhYmxlU3RhdGUAQ29tcGlsZXJH
+ZW5lcmF0ZWRBdHRyaWJ1dGUARGVidWdnZXJOb25Vc2VyQ29kZUF0dHJpYnV0ZQBEZWJ1Z2dhYmxl
+QXR0cmlidXRlAEVkaXRvckJyb3dzYWJsZUF0dHJpYnV0ZQBBc3NlbWJseVRpdGxlQXR0cmlidXRl
+AEFzc2VtYmx5VHJhZGVtYXJrQXR0cmlidXRlAFRhcmdldEZyYW1ld29ya0F0dHJpYnV0ZQBBc3Nl
+bWJseUNvbmZpZ3VyYXRpb25BdHRyaWJ1dGUAQXNzZW1ibHlEZXNjcmlwdGlvbkF0dHJpYnV0ZQBD
+b21waWxhdGlvblJlbGF4YXRpb25zQXR0cmlidXRlAEFzc2VtYmx5UHJvZHVjdEF0dHJpYnV0ZQBB
+c3NlbWJseUNvcHlyaWdodEF0dHJpYnV0ZQBTU0lTU2NyaXB0VGFza0VudHJ5UG9pbnRBdHRyaWJ1
+dGUAQXNzZW1ibHlDb21wYW55QXR0cmlidXRlAFJ1bnRpbWVDb21wYXRpYmlsaXR5QXR0cmlidXRl
+AGdldF9WYWx1ZQB2YWx1ZQBTeXN0ZW0uUnVudGltZS5WZXJzaW9uaW5nAFRvU3RyaW5nAE1pY3Jv
+c29mdC5TcWxTZXJ2ZXIuU2NyaXB0VGFzawBNaWNyb3NvZnQuU3FsU2VydmVyLkR0cy5UYXNrcy5T
+Y3JpcHRUYXNrAFNjcmlwdE9iamVjdE1vZGVsAFN5c3RlbS5Db21wb25lbnRNb2RlbABTVF80YmIy
+NzI2MzhjNzQ0ZWU3YWEyZmE3NjExNTViZTBlOC5kbGwAZ2V0X0l0ZW0AU3lzdGVtAEVudW0AcmVz
+b3VyY2VNYW4AU2NyaXB0TWFpbgBTeXN0ZW0uQ29uZmlndXJhdGlvbgBTeXN0ZW0uR2xvYmFsaXph
+dGlvbgBTeXN0ZW0uUmVmbGVjdGlvbgBDdWx0dXJlSW5mbwBnZXRfUmVzb3VyY2VNYW5hZ2VyAC5j
+dG9yAC5jY3RvcgBTeXN0ZW0uRGlhZ25vc3RpY3MAU3lzdGVtLlJ1bnRpbWUuQ29tcGlsZXJTZXJ2
+aWNlcwBTeXN0ZW0uUmVzb3VyY2VzAFNUXzRiYjI3MjYzOGM3NDRlZTdhYTJmYTc2MTE1NWJlMGU4
+LlByb3BlcnRpZXMuUmVzb3VyY2VzLnJlc291cmNlcwBEZWJ1Z2dpbmdNb2RlcwBTVF80YmIyNzI2
+MzhjNzQ0ZWU3YWEyZmE3NjExNTViZTBlOC5Qcm9wZXJ0aWVzAGdldF9WYXJpYWJsZXMAU2V0dGlu
+Z3MAU3lzdGVtLldpbmRvd3MuRm9ybXMAU3VjY2VzcwBnZXRfRHRzAFNjcmlwdFJlc3VsdHMAT2Jq
+ZWN0AGdldF9EZWZhdWx0AERpYWxvZ1Jlc3VsdABzZXRfVGFza1Jlc3VsdABTaG93AE1lc3NhZ2VC
+b3gAZ2V0X0Fzc2VtYmx5AAAAAAAjVQBzAGUAcgA6ADoATABhAHMAdABSAHUAbgBEAGEAdABlAABx
+UwBUAF8ANABiAGIAMgA3ADIANgAzADgAYwA3ADQANABlAGUANwBhAGEAMgBmAGEANwA2ADEAMQA1
+ADUAYgBlADAAZQA4AC4AUAByAG8AcABlAHIAdABpAGUAcwAuAFIAZQBzAG8AdQByAGMAZQBzAAAA
+y7qsi5kLpkWZDZSfmGyTDAAEIAEBCAMgAAEFIAEBEREEIAEBDgUgAQERUQQgABJhBCAAEmUFIAES
+aRwDIAAcAyAADgUAARFxDgYAARJ1EXkEIAASfQYgAgEOEn0It3pcVhk04IkIiYRdzYCAzJEEAAAA
+AAQBAAAAAwYSSQMGEk0DBhIQAgYIAwYRFAQAABJJBAAAEk0FAAEBEk0EAAASEAMAAAEECAASSQQI
+ABJNBAgAEhAIAQAIAAAAAAAeAQABAFQCFldyYXBOb25FeGNlcHRpb25UaHJvd3MBCAEAAgAAAAAA
+KAEAI1NUXzRiYjI3MjYzOGM3NDRlZTdhYTJmYTc2MTE1NWJlMGU4AAAFAQAAAAAfAQAaU3Rld2Fy
+ZCBIZWFsdGggQ2FyZSBTeXN0ZW0AADABACtDb3B5cmlnaHQgQCBTdGV3YXJkIEhlYWx0aCBDYXJl
+IFN5c3RlbSAyMDE5AABJAQAaLk5FVEZyYW1ld29yayxWZXJzaW9uPXY0LjUBAFQOFEZyYW1ld29y
+a0Rpc3BsYXlOYW1lEi5ORVQgRnJhbWV3b3JrIDQuNQAAtAAAAM7K774BAAAAkQAAAGxTeXN0ZW0u
+UmVzb3VyY2VzLlJlc291cmNlUmVhZGVyLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0
+dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkjU3lzdGVtLlJlc291
+cmNlcy5SdW50aW1lUmVzb3VyY2VTZXQCAAAAAAAAAAAAAABQQURQQURQtAAAAOwtAAAAAAAAAAAA
+AAYuAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4LQAAAAAAAAAAAAAAAF9Db3JEbGxNYWluAG1z
+Y29yZWUuZGxsAAAAAAD/JQAgABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAABABAAAAAYAACAAAAAAAAAAAAAAAAAAAABAAEAAAAwAACAAAAAAAAAAAAAAAAAAAABAAAA
+AABIAAAAWEAAAIIEAAAAAAAAAAAAAIIENAAAAFYAUwBfAFYARQBSAFMASQBPAE4AXwBJAE4ARgBP
+AAAAAAC9BO/+AAABAAAAAQDlMrAbAAABAOUysBs/AAAAAAAAAAQAAAACAAAAAAAAAAAAAAAAAAAA
+RAAAAAEAVgBhAHIARgBpAGwAZQBJAG4AZgBvAAAAAAAkAAQAAABUAHIAYQBuAHMAbABhAHQAaQBv
+AG4AAAAAAAAAsATiAwAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAAC+AwAAAQAwADAA
+MAAwADAANABiADAAAAAaAAEAAQBDAG8AbQBtAGUAbgB0AHMAAAAAAAAAVgAbAAEAQwBvAG0AcABh
+AG4AeQBOAGEAbQBlAAAAAABTAHQAZQB3AGEAcgBkACAASABlAGEAbAB0AGgAIABDAGEAcgBlACAA
+UwB5AHMAdABlAG0AAAAAAHAAJAABAEYAaQBsAGUARABlAHMAYwByAGkAcAB0AGkAbwBuAAAAAABT
+AFQAXwA0AGIAYgAyADcAMgA2ADMAOABjADcANAA0AGUAZQA3AGEAYQAyAGYAYQA3ADYAMQAxADUA
+NQBiAGUAMABlADgAAAA+AA8AAQBGAGkAbABlAFYAZQByAHMAaQBvAG4AAAAAADEALgAwAC4ANwAw
+ADgAOAAuADEAMwAwADIAOQAAAAAAcAAoAAEASQBuAHQAZQByAG4AYQBsAE4AYQBtAGUAAABTAFQA
+XwA0AGIAYgAyADcAMgA2ADMAOABjADcANAA0AGUAZQA3AGEAYQAyAGYAYQA3ADYAMQAxADUANQBi
+AGUAMABlADgALgBkAGwAbAAAAHwALAABAEwAZQBnAGEAbABDAG8AcAB5AHIAaQBnAGgAdAAAAEMA
+bwBwAHkAcgBpAGcAaAB0ACAAQAAgAFMAdABlAHcAYQByAGQAIABIAGUAYQBsAHQAaAAgAEMAYQBy
+AGUAIABTAHkAcwB0AGUAbQAgADIAMAAxADkAAAAqAAEAAQBMAGUAZwBhAGwAVAByAGEAZABlAG0A
+YQByAGsAcwAAAAAAAAAAAHgAKAABAE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABT
+AFQAXwA0AGIAYgAyADcAMgA2ADMAOABjADcANAA0AGUAZQA3AGEAYQAyAGYAYQA3ADYAMQAxADUA
+NQBiAGUAMABlADgALgBkAGwAbAAAAGgAJAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAAUwBU
+AF8ANABiAGIAMgA3ADIANgAzADgAYwA3ADQANABlAGUANwBhAGEAMgBmAGEANwA2ADEAMQA1ADUA
+YgBlADAAZQA4AAAAQgAPAAEAUAByAG8AZAB1AGMAdABWAGUAcgBzAGkAbwBuAAAAMQAuADAALgA3
+ADAAOAA4AC4AMQAzADAAMgA5AAAAAABGAA8AAQBBAHMAcwBlAG0AYgBsAHkAIABWAGUAcgBzAGkA
+bwBuAAAAMQAuADAALgA3ADAAOAA4AC4AMQAzADAAMgA5AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAwAAAAYPgAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
+        </ScriptProject>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Transfer Data from Kronos to SMG DataMart"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{4492161C-510B-4AD1-BFBD-647BFD3C4130}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Transfer Data from Kronos to SMG DataMart"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[kronos].[wip_PCPComp]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[SMGDataMart]"
+                  connectionManagerRefId="Package.ConnectionManagers[SMGDataMart]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      cachedDataType="wstr"
+                      cachedLength="40"
+                      cachedName="LastName"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      cachedDataType="wstr"
+                      cachedLength="20"
+                      cachedName="FirstName"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EmpNo]"
+                      cachedDataType="wstr"
+                      cachedLength="15"
+                      cachedName="EmpNo"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmpNo]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmpNo]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[OriginalHireDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="OriginalHireDate"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OriginalHireDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[OriginalHireDate]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[LastHireDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="LastHireDate"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastHireDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastHireDate]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[JobCodeDescription]"
+                      cachedDataType="wstr"
+                      cachedLength="40"
+                      cachedName="JobCodeDescription"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[JobCodeDescription]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[JobCodeDescription]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ccCostCenter]"
+                      cachedDataType="wstr"
+                      cachedLength="259"
+                      cachedName="ccCostCenter"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ccCostCenter]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[ccCostCenter]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EmploymentStatus]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="EmploymentStatus"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmploymentStatus]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmploymentStatus]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[HourlyAmount]"
+                      cachedDataType="numeric"
+                      cachedName="HourlyAmount"
+                      cachedPrecision="15"
+                      cachedScale="5"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HourlyAmount]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[HourlyAmount]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[PayGradeCode]"
+                      cachedDataType="wstr"
+                      cachedLength="15"
+                      cachedName="PayGradeCode"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PayGradeCode]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayGradeCode]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FTEHrsPerWeek]"
+                      cachedDataType="numeric"
+                      cachedName="FTEHrsPerWeek"
+                      cachedPrecision="14"
+                      cachedScale="5"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FTEHrsPerWeek]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[FTEHrsPerWeek]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[AnnualSalary]"
+                      cachedDataType="numeric"
+                      cachedName="AnnualSalary"
+                      cachedPrecision="12"
+                      cachedScale="2"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[AnnualSalary]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[AnnualSalary]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EmployeeName]"
+                      cachedDataType="wstr"
+                      cachedLength="83"
+                      cachedName="EmployeeName"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmployeeName]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmployeeName]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[HireDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="HireDate"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HireDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[HireDate]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CorpCode]"
+                      cachedDataType="wstr"
+                      cachedLength="128"
+                      cachedName="CorpCode"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CorpCode]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CorpCode]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CostCenter]"
+                      cachedDataType="wstr"
+                      cachedLength="128"
+                      cachedName="CostCenter"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CostCenter]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CostCenter]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[JobCode]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="JobCode"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[JobCode]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[JobCode]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[PayrollCode]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="PayrollCode"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PayrollCode]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayrollCode]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Hours]"
+                      cachedDataType="numeric"
+                      cachedName="Hours"
+                      cachedPrecision="14"
+                      cachedScale="5"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hours]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BaseRate]"
+                      cachedDataType="numeric"
+                      cachedName="BaseRate"
+                      cachedPrecision="14"
+                      cachedScale="5"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BaseRate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[BaseRate]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[PayDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="PayDate"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PayDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayDate]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Wages]"
+                      cachedDataType="numeric"
+                      cachedName="Wages"
+                      cachedPrecision="14"
+                      cachedScale="5"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Wages]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Wages]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EOC]"
+                      cachedDataType="wstr"
+                      cachedLength="128"
+                      cachedName="EOC"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EOC]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EOC]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Month]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="6"
+                      cachedName="Month"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Month]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Month]" />
+                    <inputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CompensationDetailChargeDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="CompensationDetailChargeDate"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CompensationDetailChargeDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CompensationDetailChargeDate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmpNo]"
+                      dataType="wstr"
+                      length="50"
+                      name="EmpNo" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OriginalHireDate]"
+                      dataType="dbTimeStamp"
+                      name="OriginalHireDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastHireDate]"
+                      dataType="dbTimeStamp"
+                      name="LastHireDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[JobCodeDescription]"
+                      dataType="wstr"
+                      length="50"
+                      name="JobCodeDescription" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ccCostCenter]"
+                      dataType="wstr"
+                      length="20"
+                      name="ccCostCenter" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmploymentStatus]"
+                      dataType="wstr"
+                      length="25"
+                      name="EmploymentStatus" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HourlyAmount]"
+                      dataType="numeric"
+                      name="HourlyAmount"
+                      precision="15"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PayGradeCode]"
+                      dataType="wstr"
+                      length="15"
+                      name="PayGradeCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FTEHrsPerWeek]"
+                      dataType="numeric"
+                      name="FTEHrsPerWeek"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[AnnualSalary]"
+                      dataType="numeric"
+                      name="AnnualSalary"
+                      precision="12"
+                      scale="2" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmployeeName]"
+                      dataType="wstr"
+                      length="150"
+                      name="EmployeeName" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HireDate]"
+                      dataType="dbTimeStamp"
+                      name="HireDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CorpCode]"
+                      dataType="wstr"
+                      length="10"
+                      name="CorpCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CostCenter]"
+                      dataType="wstr"
+                      length="10"
+                      name="CostCenter" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[JobCode]"
+                      dataType="wstr"
+                      length="10"
+                      name="JobCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PayrollCode]"
+                      dataType="wstr"
+                      length="30"
+                      name="PayrollCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hours]"
+                      dataType="numeric"
+                      name="Hours"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BaseRate]"
+                      dataType="numeric"
+                      name="BaseRate"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PayDate]"
+                      dataType="dbTimeStamp"
+                      name="PayDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Wages]"
+                      dataType="numeric"
+                      name="Wages"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EOC]"
+                      dataType="wstr"
+                      length="10"
+                      name="EOC" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Month]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      name="Month" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CompensationDetailChargeDate]"
+                      dataType="dbTimeStamp"
+                      name="CompensationDetailChargeDate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="OLE DB Source"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT 
+	 LTRIM(RTRIM(e.LastName)) as LastName
+	,LTRIM(RTRIM(e.FirstName)) as FirstName
+	,LTRIM(RTRIM(e.EmpNo)) as EmpNo
+	,e.OriginalHireDate
+	,e.LastHireDate
+	,e.JobCodeDescription
+	,'cc' + PARSENAME(LEFT(CompDtl.DebitGLAccountSegment, LEN(CompDtl.DebitGLAccountSegment) - CHARINDEX('.', REVERSE(CompDtl.DebitGLAccountSegment))), 4) + '.' +
+	  PARSENAME(LEFT(CompDtl.DebitGLAccountSegment, LEN(CompDtl.DebitGLAccountSegment) - CHARINDEX('.', REVERSE(CompDtl.DebitGLAccountSegment))), 3) as [ccCostCenter]
+	,LTRIM(RTRIM(e.EmploymentStatus)) as EmploymentStatus
+	,e.HourlyAmount
+	,LTRIM(RTRIM(e.PayGradeCode)) as PayGradeCode
+	,e.StandardUnitsPerWeek as FTEHrsPerWeek
+	,e.AnnualSalary
+	,e.FullName as EmployeeName
+	,e.OriginalHireDate as HireDate
+	,PARSENAME(LEFT(CompDtl.DebitGLAccountSegment, LEN(CompDtl.DebitGLAccountSegment) - CHARINDEX('.', REVERSE(CompDtl.DebitGLAccountSegment))), 4) as [CorpCode]
+	,PARSENAME(LEFT(CompDtl.DebitGLAccountSegment, LEN(CompDtl.DebitGLAccountSegment) - CHARINDEX('.', REVERSE(CompDtl.DebitGLAccountSegment))), 3) as [CostCenter]
+	,SUBSTRING(CompDtl.DebitGLAccountSegment, LEN(CompDtl.DebitGLAccountSegment) - CHARINDEX('.', REVERSE(CompDtl.DebitGLAccountSegment)) + 1 + 1, LEN(CompDtl.DebitGLAccountSegment)) as [JobCode]
+	,pc.PayrollCode
+	,CompDtl.CompensationDetailQuantity as [Hours]
+	,CompDtl.PayRate as BaseRate
+	,pt.PayrollTransactionPaymentDate as [PayDate]
+	,CompDtl.CompensationDetailAmount as [Wages]
+	--,CompDtl.DebitGLAccountSegment as [EOC_TEMP]
+	,PARSENAME(LEFT(CompDtl.DebitGLAccountSegment, LEN(CompDtl.DebitGLAccountSegment) - CHARINDEX('.', REVERSE(CompDtl.DebitGLAccountSegment))), 2) as [EOC]
+	,LEFT(CONVERT(VARCHAR, pt.PayrollTransactionPaymentDate, 107), 3) + ' ' + RIGHT(CONVERT(VARCHAR, pt.PayrollTransactionPaymentDate, 101), 2) as [Month]
+	,CompDtl.CompensationDetailChargeDate
+FROM [dbo].[EmployeePG2_Job_Curr] e 
+	INNER JOIN dbo.tPayroll_Transactions pt
+		ON pt.PersonIdNo = e.PersonIdNo
+	INNER JOIN dbo.tCompensation_DETAILS CompDtl
+		ON CompDtl.PayrollTransactionIdNo = pt.PayrollTransactionIdNo
+	INNER JOIN dbo.tPAYROLL_CODES pc
+		ON CompDtl.PayrollCodeIdNo = pc.PayrollCodeIdNo
+WHERE 1=1
+AND pt.PayrollTransactionPaymentDate &gt;= ?</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping">"Parameter0:Input",{F1C315B0-3F4C-43F4-B97B-6BE916D9A7FB};</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[Kronos]"
+                  connectionManagerRefId="Package.ConnectionManagers[Kronos]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
+                      length="40"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
+                      name="LastName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
+                      length="20"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
+                      name="FirstName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmpNo]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EmpNo]"
+                      length="15"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmpNo]"
+                      name="EmpNo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[OriginalHireDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[OriginalHireDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[OriginalHireDate]"
+                      name="OriginalHireDate"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastHireDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastHireDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastHireDate]"
+                      name="LastHireDate"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[JobCodeDescription]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[JobCodeDescription]"
+                      length="40"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[JobCodeDescription]"
+                      name="JobCodeDescription"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[ccCostCenter]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ccCostCenter]"
+                      length="259"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[ccCostCenter]"
+                      name="ccCostCenter"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmploymentStatus]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EmploymentStatus]"
+                      length="25"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmploymentStatus]"
+                      name="EmploymentStatus"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[HourlyAmount]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[HourlyAmount]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[HourlyAmount]"
+                      name="HourlyAmount"
+                      precision="15"
+                      scale="5"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayGradeCode]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PayGradeCode]"
+                      length="15"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayGradeCode]"
+                      name="PayGradeCode"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[FTEHrsPerWeek]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FTEHrsPerWeek]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[FTEHrsPerWeek]"
+                      name="FTEHrsPerWeek"
+                      precision="14"
+                      scale="5"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[AnnualSalary]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[AnnualSalary]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[AnnualSalary]"
+                      name="AnnualSalary"
+                      precision="12"
+                      scale="2"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmployeeName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EmployeeName]"
+                      length="83"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EmployeeName]"
+                      name="EmployeeName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[HireDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[HireDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[HireDate]"
+                      name="HireDate"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CorpCode]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CorpCode]"
+                      length="128"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CorpCode]"
+                      name="CorpCode"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CostCenter]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CostCenter]"
+                      length="128"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CostCenter]"
+                      name="CostCenter"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[JobCode]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[JobCode]"
+                      length="50"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[JobCode]"
+                      name="JobCode"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayrollCode]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PayrollCode]"
+                      length="30"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayrollCode]"
+                      name="PayrollCode"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Hours]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours]"
+                      name="Hours"
+                      precision="14"
+                      scale="5"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[BaseRate]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BaseRate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[BaseRate]"
+                      name="BaseRate"
+                      precision="14"
+                      scale="5"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PayDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[PayDate]"
+                      name="PayDate"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Wages]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Wages]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Wages]"
+                      name="Wages"
+                      precision="14"
+                      scale="5"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EOC]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EOC]"
+                      length="128"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[EOC]"
+                      name="EOC"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Month]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Month]"
+                      length="6"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[Month]"
+                      name="Month"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CompensationDetailChargeDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CompensationDetailChargeDate]"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].Columns[CompensationDetailChargeDate]"
+                      name="CompensationDetailChargeDate"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="40"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="20"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EmpNo]"
+                      dataType="wstr"
+                      length="15"
+                      name="EmpNo" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[OriginalHireDate]"
+                      dataType="dbTimeStamp"
+                      name="OriginalHireDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastHireDate]"
+                      dataType="dbTimeStamp"
+                      name="LastHireDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[JobCodeDescription]"
+                      dataType="wstr"
+                      length="40"
+                      name="JobCodeDescription" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ccCostCenter]"
+                      dataType="wstr"
+                      length="259"
+                      name="ccCostCenter" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EmploymentStatus]"
+                      dataType="wstr"
+                      length="25"
+                      name="EmploymentStatus" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[HourlyAmount]"
+                      dataType="numeric"
+                      name="HourlyAmount"
+                      precision="15"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PayGradeCode]"
+                      dataType="wstr"
+                      length="15"
+                      name="PayGradeCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FTEHrsPerWeek]"
+                      dataType="numeric"
+                      name="FTEHrsPerWeek"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[AnnualSalary]"
+                      dataType="numeric"
+                      name="AnnualSalary"
+                      precision="12"
+                      scale="2" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EmployeeName]"
+                      dataType="wstr"
+                      length="83"
+                      name="EmployeeName" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[HireDate]"
+                      dataType="dbTimeStamp"
+                      name="HireDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CorpCode]"
+                      dataType="wstr"
+                      length="128"
+                      name="CorpCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CostCenter]"
+                      dataType="wstr"
+                      length="128"
+                      name="CostCenter" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[JobCode]"
+                      dataType="wstr"
+                      length="50"
+                      name="JobCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PayrollCode]"
+                      dataType="wstr"
+                      length="30"
+                      name="PayrollCode" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Hours]"
+                      dataType="numeric"
+                      name="Hours"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BaseRate]"
+                      dataType="numeric"
+                      name="BaseRate"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PayDate]"
+                      dataType="dbTimeStamp"
+                      name="PayDate" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Wages]"
+                      dataType="numeric"
+                      name="Wages"
+                      precision="14"
+                      scale="5" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[EOC]"
+                      dataType="wstr"
+                      length="128"
+                      name="EOC" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Month]"
+                      codePage="1252"
+                      dataType="str"
+                      length="6"
+                      name="Month" />
+                    <externalMetadataColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CompensationDetailChargeDate]"
+                      dataType="dbTimeStamp"
+                      name="CompensationDetailChargeDate" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
+                      dataType="wstr"
+                      length="40"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
+                      name="LastName" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
+                      dataType="wstr"
+                      length="20"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
+                      name="FirstName" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EmpNo]"
+                      dataType="wstr"
+                      length="15"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EmpNo]"
+                      name="EmpNo" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[OriginalHireDate]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[OriginalHireDate]"
+                      name="OriginalHireDate" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastHireDate]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastHireDate]"
+                      name="LastHireDate" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[JobCodeDescription]"
+                      dataType="wstr"
+                      length="40"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[JobCodeDescription]"
+                      name="JobCodeDescription" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ccCostCenter]"
+                      dataType="wstr"
+                      length="259"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ccCostCenter]"
+                      name="ccCostCenter" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EmploymentStatus]"
+                      dataType="wstr"
+                      length="25"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EmploymentStatus]"
+                      name="EmploymentStatus" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[HourlyAmount]"
+                      dataType="numeric"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[HourlyAmount]"
+                      name="HourlyAmount"
+                      precision="15"
+                      scale="5" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PayGradeCode]"
+                      dataType="wstr"
+                      length="15"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PayGradeCode]"
+                      name="PayGradeCode" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FTEHrsPerWeek]"
+                      dataType="numeric"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FTEHrsPerWeek]"
+                      name="FTEHrsPerWeek"
+                      precision="14"
+                      scale="5" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[AnnualSalary]"
+                      dataType="numeric"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[AnnualSalary]"
+                      name="AnnualSalary"
+                      precision="12"
+                      scale="2" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EmployeeName]"
+                      dataType="wstr"
+                      length="83"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EmployeeName]"
+                      name="EmployeeName" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[HireDate]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[HireDate]"
+                      name="HireDate" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CorpCode]"
+                      dataType="wstr"
+                      length="128"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CorpCode]"
+                      name="CorpCode" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CostCenter]"
+                      dataType="wstr"
+                      length="128"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CostCenter]"
+                      name="CostCenter" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[JobCode]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[JobCode]"
+                      name="JobCode" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PayrollCode]"
+                      dataType="wstr"
+                      length="30"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PayrollCode]"
+                      name="PayrollCode" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Hours]"
+                      dataType="numeric"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Hours]"
+                      name="Hours"
+                      precision="14"
+                      scale="5" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BaseRate]"
+                      dataType="numeric"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BaseRate]"
+                      name="BaseRate"
+                      precision="14"
+                      scale="5" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PayDate]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PayDate]"
+                      name="PayDate" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Wages]"
+                      dataType="numeric"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Wages]"
+                      name="Wages"
+                      precision="14"
+                      scale="5" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EOC]"
+                      dataType="wstr"
+                      length="128"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[EOC]"
+                      name="EOC" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Month]"
+                      codePage="1252"
+                      dataType="str"
+                      length="6"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Month]"
+                      name="Month" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CompensationDetailChargeDate]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CompensationDetailChargeDate]"
+                      name="CompensationDetailChargeDate" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Transfer Data from Kronos to SMG DataMart.Paths[OLE DB Source Output]"
+              endId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Truncate wip_PCPComp table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{92C0A743-711B-4107-B142-2A3F7EE82B0B}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Truncate wip_PCPComp table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{BD77A527-9859-48AA-ACAA-BFA93E9846CF}"
+          SQLTask:SqlStatementSource="TRUNCATE TABLE [kronos].[WIP_PCPComp]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{FF7408AD-DD16-4F15-8C94-DBFF6C982CA2}"
+      DTS:From="Package\Execute SQL Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Test getting LastRunDate - Script Task" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{D11CA390-2DF8-499D-AE75-123187535352}"
+      DTS:From="Package\Execute SQL Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Truncate wip_PCPComp table" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{02EBC72E-5818-42FA-B160-5231DDEA7949}"
+      DTS:From="Package\Truncate wip_PCPComp table"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Transfer Data from Kronos to SMG DataMart" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{6E806D89-CA1A-45A2-A39D-16830092ACF9}"
+      DTS:From="Package\Transfer Data from Kronos to SMG DataMart"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\Load Data from wip_PCPComp to stg_PCPComp table" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="165,42"
+          Id="Package\Execute SQL Task"
+          TopLeft="240,44" />
+        <NodeLayout
+          Size="333,42"
+          Id="Package\Load Data from wip_PCPComp to stg_PCPComp table"
+          TopLeft="159,306" />
+        <NodeLayout
+          Size="263,42"
+          Id="Package\Test getting LastRunDate - Script Task"
+          TopLeft="531,59" />
+        <NodeLayout
+          Size="291,42"
+          Id="Package\Transfer Data from Kronos to SMG DataMart"
+          TopLeft="181,211" />
+        <NodeLayout
+          Size="220,42"
+          Id="Package\Truncate wip_PCPComp table"
+          TopLeft="213,122" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="405,65">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="126,15"
+              Start="0,0"
+              End="118.5,15">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="59,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="59,0"
+                    Point2="63,0"
+                    Point3="63,4" />
+                  <mssgle:LineSegment
+                    End="63,11" />
+                  <mssgle:CubicBezierSegment
+                    Point1="63,11"
+                    Point2="63,15"
+                    Point3="67,15" />
+                  <mssgle:LineSegment
+                    End="118.5,15" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="322.75,86">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,36"
+              Start="0,0"
+              End="0,28.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,28.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="324.75,164">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,47"
+              Start="0,0"
+              End="0,39.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,39.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="326,253">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,53"
+              Start="0,0"
+              End="0,45.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,45.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Transfer Data from Kronos to SMG DataMart">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="152,42"
+          Id="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source"
+          TopLeft="222,30" />
+        <NodeLayout
+          Size="173,47"
+          Id="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination"
+          TopLeft="406,145" />
+        <EdgeLayout
+          Id="Package\Transfer Data from Kronos to SMG DataMart.Paths[OLE DB Source Output]"
+          TopLeft="298,72">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="194.5,73"
+              Start="0,0"
+              End="194.5,65.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,32.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,32.5"
+                    Point2="0,36.5"
+                    Point3="4,36.5" />
+                  <mssgle:LineSegment
+                    End="190.5,36.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="190.5,36.5"
+                    Point2="194.5,36.5"
+                    Point3="194.5,40.5" />
+                  <mssgle:LineSegment
+                    End="194.5,65.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Transfer Data from Kronos to SMG DataMart\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
